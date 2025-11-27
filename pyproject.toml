@@ -2,6 +2,49 @@
 name = "yotg-media-bot"
 version = "0.1.0"
 description = "Add your description here"
+
 readme = "README.md"
+license = "MIT"
+
+authors = [
+  { name = "Panfilov, Maksim", email = "maks@panf.me" },
+]
+maintainers = [{ name = "Panfilov, Maksim", email = "maks@panf.me" }]
+
 requires-python = ">=3.12"
-dependencies = []
+
+dependencies = [
+    "aiogram>=3.22.0",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.6.0",
+    "pyyaml>=6.0.0",
+]
+
+[dependency-groups]
+dev = [
+  { include-group = "lint" },
+  { include-group = "test" },
+]
+test = [
+    "pytest>=8.4",
+]
+lint = [
+    "mypy>=1.18.2",
+    "ruff>=0.14.1",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+exclude = [
+    "^test/",
+    "^tests/",
+]
