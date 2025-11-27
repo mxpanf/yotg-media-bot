@@ -7,8 +7,10 @@ from __future__ import annotations
 
 import shutil
 import uuid
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterator
 
 
 @dataclass
@@ -31,3 +33,11 @@ class Storage:
             shutil.rmtree(path, ignore_errors=True)
         else:
             path.unlink(missing_ok=True)
+
+    @contextmanager
+    def job_scope(self, prefix: str = "job") -> Iterator[Path]:
+        job_dir = self.create_job_dir(prefix)
+        try:
+            yield job_dir
+        finally:
+            self.cleanup(job_dir)

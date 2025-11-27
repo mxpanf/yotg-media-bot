@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Lightweight i18n utilities for the bot.
 """

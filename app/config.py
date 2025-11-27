@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Application configuration loader based on Pydantic Settings.
 Reads from YAML file and environment variables.

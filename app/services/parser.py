@@ -1,34 +1,44 @@
 # -*- coding: utf-8 -*-
 """
-URL parser and platform detector.
+URL parser facade: delegates to platform-specific parsers.
 """
 
 from __future__ import annotations
 
-import re
-from enum import Enum
-from typing import Final
+from urllib.parse import urlparse
 
+from app.services.parser_types import MediaKind, ParsedLink, Platform
 
-class Platform(str, Enum):
-    YOUTUBE_MUSIC = "YouTube Music"
-    UNKNOWN = "Unknown"
+# Absolute import keeps tooling happy when running from project root.
+from app.services.parsers import youtube
 
-
-YTM_DOMAINS: Final[tuple[str, ...]] = ("music.youtube.com", "youtu.be")
+__all__ = ["Platform", "MediaKind", "ParsedLink", "detect_platform", "parse_url"]
 
 
 def detect_platform(url: str) -> Platform:
-    normalized = url.strip()
+    return parse_url(url).platform
+
+
+def parse_url(url: str) -> ParsedLink:
+    normalized = (url or "").strip()
     if not normalized:
-        return Platform.UNKNOWN
-    if _is_youtube_music(normalized):
-        return Platform.YOUTUBE_MUSIC
-    return Platform.UNKNOWN
+        return ParsedLink(
+            platform=Platform.UNKNOWN,
+            kind=MediaKind.UNKNOWN,
+            original_url=url,
+            canonical_url=url,
+        )
 
+    parsed = urlparse(normalized if "://" in normalized else f"https://{normalized}")
 
-def _is_youtube_music(url: str) -> bool:
-    if any(domain in url for domain in YTM_DOMAINS):
-        return True
-    pattern = re.compile(r"https?://(www\.)?youtube\.com/watch\?v=")
-    return bool(pattern.search(url))
+    for parser in (youtube.parse_music, youtube.parse_youtube):
+        parsed_link = parser(parsed, normalized)
+        if parsed_link:
+            return parsed_link
+
+    return ParsedLink(
+        platform=Platform.UNKNOWN,
+        kind=MediaKind.UNKNOWN,
+        original_url=url,
+        canonical_url=normalized,
+    )
