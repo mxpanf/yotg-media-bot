@@ -1,0 +1,5 @@
+# YAML settings for YOTG Media Bot
+# Copy to config/settings.yaml and fill in the values.
+bot_token: "YOUR_TELEGRAM_BOT_TOKEN"
+locale_default: "ru"
+tmp_dir: "/dev/shm/yotg-media-bot"

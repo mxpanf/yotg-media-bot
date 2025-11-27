@@ -1,0 +1,11 @@
+{
+    "start.greeting": "🔗 Отправьте ссылку, я скачаю аудио. Поддерживается: YouTube Music (MVP).",
+    "status.processing": "🔣 Обработка...",
+    "status.type_detected": "🎵 Определён тип: {kind}",
+    "status.downloading": "⬇️ Загрузка...",
+    "status.converting": "🔄 Конвертация...",
+    "status.metadata": "👁‍🗨 Добавление метаданных...",
+    "status.uploading": "↗️ Отправка...",
+    "error.unsupported": "⚠️ Эта ссылка пока не поддерживается.",
+    "error.generic": "❌ Не удалось обработать ссылку."
+}

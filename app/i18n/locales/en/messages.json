@@ -1,0 +1,11 @@
+{
+    "start.greeting": "🔗 Send me a link to download audio. Supported: YouTube Music (MVP).",
+    "status.processing": "🔣 Processing...",
+    "status.type_detected": "🎵 Detected: {kind}",
+    "status.downloading": "⬇️ Downloading...",
+    "status.converting": "🔄 Converting...",
+    "status.metadata": "👁‍🗨 Adding metadata...",
+    "status.uploading": "↗️ Uploading...",
+    "error.unsupported": "⚠️ Link is not supported yet.",
+    "error.generic": "❌ Oops, could not process the link."
+}
