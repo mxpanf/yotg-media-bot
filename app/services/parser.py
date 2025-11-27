@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 URL parser facade: delegates to platform-specific parsers.
 """

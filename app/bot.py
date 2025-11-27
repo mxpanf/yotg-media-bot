@@ -5,6 +5,7 @@ Bot and dispatcher factory.
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -30,7 +31,7 @@ def create_dispatcher(
     config: AppConfig,
     i18n: I18n,
     storage: Storage,
-    plugins: dict[Platform, Downloader],
+    plugins: Mapping[Platform, Downloader],
 ) -> Dispatcher:
     dp = Dispatcher()
     dp.workflow_data.update(

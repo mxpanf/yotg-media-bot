@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Utility for maintaining status message updates with persistent chat actions.
 """
@@ -6,7 +5,6 @@ Utility for maintaining status message updates with persistent chat actions.
 from __future__ import annotations
 
 import asyncio
-from typing import Optional
 
 from aiogram.enums import ChatAction
 from aiogram.exceptions import TelegramAPIError
@@ -27,7 +25,7 @@ class StatusNotifier:
         self._locale = locale
         self._message: Message | None = None
         self._current_text: str = ""
-        self._action_task: Optional[asyncio.Task] = None
+        self._action_task: asyncio.Task[None] | None = None
         self._current_action: ChatAction = ChatAction.TYPING
 
     async def push(
@@ -35,7 +33,7 @@ class StatusNotifier:
         key: str,
         *,
         action: ChatAction = ChatAction.TYPING,
-        **kwargs,
+        **kwargs: object,
     ) -> None:
         await self._ensure_action(action)
         text = self._i18n.gettext(key, locale=self._locale, **kwargs)
@@ -79,8 +77,11 @@ class StatusNotifier:
             return
 
     async def _send_action(self, action: ChatAction) -> None:
+        bot = self._origin.bot
+        if bot is None:
+            return
         try:
-            await self._origin.bot.send_chat_action(
+            await bot.send_chat_action(
                 chat_id=self._origin.chat.id,
                 action=action,
             )

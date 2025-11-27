@@ -5,6 +5,8 @@ Handlers for private chats.
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
+from typing import Any
 
 from aiogram import F, Router
 from aiogram.enums import ChatAction
@@ -37,7 +39,7 @@ async def handle_link(
     message: Message,
     i18n: I18n,
     storage: Storage,
-    plugins: dict[Platform, Downloader],
+    plugins: Mapping[Platform, Downloader],
 ) -> None:
     locale = get_user_locale(message, i18n.default_locale)
     text = message.text or ""
@@ -89,9 +91,7 @@ async def handle_link(
                 caption=caption,
                 performer=download.metadata.get("artist"),
                 title=download.metadata.get("title"),
-                thumbnail=(
-                    FSInputFile(processed.thumb_path) if processed.thumb_path else None
-                ),
+                thumbnail=(FSInputFile(processed.thumb_path) if processed.thumb_path else None),
             )
     except Exception as exc:
         log.exception("Failed to process link: %s", exc)
@@ -101,7 +101,7 @@ async def handle_link(
         await notifier.delete()
 
 
-def build_caption(metadata: dict) -> str:
+def build_caption(metadata: Mapping[str, Any]) -> str:
     title = metadata.get("title") or ""
     artist = metadata.get("artist") or ""
     album = metadata.get("album") or ""

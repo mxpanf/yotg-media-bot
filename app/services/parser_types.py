@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Common parser data structures and enums.
 """
@@ -7,7 +6,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class Platform(str, Enum):
@@ -29,5 +27,5 @@ class ParsedLink:
     kind: MediaKind
     original_url: str
     canonical_url: str
-    video_id: Optional[str] = None
-    playlist_id: Optional[str] = None
+    video_id: str | None = None
+    playlist_id: str | None = None

@@ -4,7 +4,7 @@ YouTube and YouTube Music URL parsing helpers.
 
 from __future__ import annotations
 
-from typing import Final, Optional
+from typing import Final
 from urllib.parse import ParseResult, parse_qs
 
 from app.services.parser_types import MediaKind, ParsedLink, Platform
@@ -18,14 +18,14 @@ YOUTUBE_HOSTS: Final[tuple[str, ...]] = (
 )
 
 
-def parse_music(parsed: ParseResult, original: str) -> Optional[ParsedLink]:
+def parse_music(parsed: ParseResult, original: str) -> ParsedLink | None:
     host = (parsed.hostname or "").lower()
     if host not in MUSIC_HOSTS:
         return None
     return _parse(parsed, original=original, platform=Platform.YOUTUBE_MUSIC)
 
 
-def parse_youtube(parsed: ParseResult, original: str) -> Optional[ParsedLink]:
+def parse_youtube(parsed: ParseResult, original: str) -> ParsedLink | None:
     host = (parsed.hostname or "").lower()
     if host not in YOUTUBE_HOSTS:
         return None
@@ -34,7 +34,7 @@ def parse_youtube(parsed: ParseResult, original: str) -> Optional[ParsedLink]:
 
 def _parse(
     parsed: ParseResult, original: str, platform: Platform
-) -> Optional[ParsedLink]:
+) -> ParsedLink | None:
     host = (parsed.hostname or "").lower()
     path = parsed.path or ""
     qs = parse_qs(parsed.query or "")
@@ -69,7 +69,7 @@ def _parse(
 
 
 def _canonicalize(
-    platform: Platform, video_id: Optional[str], playlist_id: Optional[str]
+    platform: Platform, video_id: str | None, playlist_id: str | None
 ) -> str:
     base = (
         "https://music.youtube.com"
@@ -86,5 +86,5 @@ def _canonicalize(
     return base
 
 
-def _first(items: list[str] | None) -> Optional[str]:
+def _first(items: list[str] | None) -> str | None:
     return items[0] if items else None

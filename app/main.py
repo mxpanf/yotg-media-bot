@@ -20,7 +20,7 @@ from app.services.storage import Storage
 
 async def main() -> None:
     setup_logging()
-    config = AppConfig()
+    config = AppConfig()  # type: ignore[call-arg]
     i18n = I18n(load_translations(), default_locale=config.locale_default)
     storage = Storage(config.tmp_dir)
     storage.ensure()

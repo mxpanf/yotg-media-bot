@@ -9,8 +9,9 @@ import os
 from pathlib import Path
 from typing import Any
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 from pydantic import Field
+from pydantic.fields import FieldInfo
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -58,13 +59,13 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     def __call__(self) -> dict[str, Any]:
         return self._read()
 
-    def get_field_value(self, field, field_name: str) -> tuple[Any, str, bool]:
+    def get_field_value(self, field: FieldInfo, field_name: str) -> tuple[Any, str, bool]:
         data = self._read()
         value = data.get(field.alias or field_name)
         return value, field.alias or field_name, False
 
     def prepare_field_value(
-        self, field_name: str, field, value: Any, value_is_complex: bool
+        self, field_name: str, field: FieldInfo, value: Any, value_is_complex: bool
     ) -> Any:
         return value
 

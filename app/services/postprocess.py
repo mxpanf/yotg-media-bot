@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Post-processing: conversion to mp3 and ID3 tagging with cover art.
 """
@@ -12,8 +11,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from mutagen.id3 import APIC, ID3, TALB, TIT2, TPE1, ID3NoHeaderError
-from mutagen.id3 import error as ID3Error
+from mutagen.id3 import APIC, ID3, TALB, TIT2, TPE1, ID3NoHeaderError  # type: ignore[attr-defined]
+from mutagen.id3 import error as ID3Error  # type: ignore[attr-defined]
 from mutagen.mp3 import MP3
 
 _log = logging.getLogger("postprocess")
@@ -55,9 +54,7 @@ async def convert_and_tag(
         _log.error("ffmpeg failed: %s", stderr.decode(errors="ignore"))
         raise RuntimeError("ffmpeg conversion failed")
 
-    thumb_path = (
-        await _download_thumbnail(thumbnail_url, work_dir) if thumbnail_url else None
-    )
+    thumb_path = await _download_thumbnail(thumbnail_url, work_dir) if thumbnail_url else None
     await _write_id3(output, metadata, thumb_path)
     try:
         source.unlink(missing_ok=True)
@@ -81,29 +78,27 @@ async def _download_thumbnail(url: str, work_dir: Path) -> Path | None:
     return dest
 
 
-async def _write_id3(
-    audio_path: Path, metadata: dict[str, Any], thumb_path: Path | None
-) -> None:
+async def _write_id3(audio_path: Path, metadata: dict[str, Any], thumb_path: Path | None) -> None:
     _log.debug("Writing ID3 tags for %s", audio_path.name)
     audio = MP3(audio_path, ID3=ID3)
     try:
-        audio.add_tags()
+        audio.add_tags()  # type: ignore[no-untyped-call]
     except (ID3Error, ID3NoHeaderError):
         pass
     if audio.tags is None:
-        audio.tags = ID3()
+        audio.tags = ID3()  # type: ignore[no-untyped-call]
 
     title = metadata.get("title") or "Unknown Title"
     artist = metadata.get("artist") or "Unknown Artist"
     album = metadata.get("album") or ""
 
-    audio.tags["TIT2"] = TIT2(encoding=3, text=title)
-    audio.tags["TPE1"] = TPE1(encoding=3, text=artist)
-    audio.tags["TALB"] = TALB(encoding=3, text=album)
+    audio.tags["TIT2"] = TIT2(encoding=3, text=title)  # type: ignore[no-untyped-call]
+    audio.tags["TPE1"] = TPE1(encoding=3, text=artist)  # type: ignore[no-untyped-call]
+    audio.tags["TALB"] = TALB(encoding=3, text=album)  # type: ignore[no-untyped-call]
 
     if thumb_path and thumb_path.exists():
         audio.tags.add(
-            APIC(
+            APIC(  # type: ignore[no-untyped-call]
                 encoding=3,
                 mime="image/jpeg",
                 type=3,

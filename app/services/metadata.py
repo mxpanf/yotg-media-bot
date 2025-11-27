@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 External metadata enrichment (e.g., Apple Music).
 """
@@ -6,6 +5,7 @@ External metadata enrichment (e.g., Apple Music).
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 from typing import Any, TypedDict
 
 import aiohttp
@@ -27,15 +27,16 @@ async def fetch_clean_metadata(query: str) -> CleanMetadata | None:
     Query Apple iTunes Search API for cleaned metadata.
     """
     url = "https://itunes.apple.com/search"
-    params = {
+    params: Mapping[str, str] = {
         "term": query,
         "media": "music",
         "entity": "song",
-        "limit": 1,
+        "limit": "1",
     }
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, params=params, timeout=10) as resp:
+        timeout = aiohttp.ClientTimeout(total=10)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(url, params=params) as resp:
                 if resp.status != 200:
                     log.debug("Apple metadata: status %s for %s", resp.status, query)
                     return None

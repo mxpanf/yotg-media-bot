@@ -36,6 +36,10 @@ lint = [
     "ruff>=0.14.1",
 ]
 
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 ignore = ["E501"]

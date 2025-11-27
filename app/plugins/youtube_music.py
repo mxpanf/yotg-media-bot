@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 YouTube Music loader plugin using yt-dlp.
 """
