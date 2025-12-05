@@ -15,7 +15,7 @@ from yt_dlp.utils import DownloadError
 
 from app.services.downloader import DownloadResult
 from app.services.metadata import fetch_clean_metadata
-from app.services.parser_types import Platform
+from app.services.parser_types import MediaKind, Platform
 
 
 class YoutubeMusicPlugin:
@@ -31,6 +31,7 @@ class YoutubeMusicPlugin:
         return DownloadResult(
             source_url=url,
             platform=Platform.YOUTUBE_MUSIC,
+            kind=MediaKind.TRACK,
             original_path=file_path,
             metadata=metadata,
             thumbnail_url=metadata.get("thumbnail_url") or info.get("thumbnail"),

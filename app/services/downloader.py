@@ -8,13 +8,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
-from app.services.parser_types import Platform
+from app.services.parser_types import MediaKind, Platform
 
 
 @dataclass
 class DownloadResult:
     source_url: str
     platform: Platform
+    kind: MediaKind
     original_path: Path
     metadata: dict[str, Any]
     thumbnail_url: str | None = None

@@ -37,3 +37,7 @@ class I18n:
             return value.format(**kwargs)
         except Exception:
             return value
+
+    @property
+    def available_locales(self) -> list[str]:
+        return sorted(self.translations.keys())

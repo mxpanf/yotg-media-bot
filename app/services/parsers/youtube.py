@@ -32,9 +32,7 @@ def parse_youtube(parsed: ParseResult, original: str) -> ParsedLink | None:
     return _parse(parsed, original=original, platform=Platform.YOUTUBE)
 
 
-def _parse(
-    parsed: ParseResult, original: str, platform: Platform
-) -> ParsedLink | None:
+def _parse(parsed: ParseResult, original: str, platform: Platform) -> ParsedLink | None:
     host = (parsed.hostname or "").lower()
     path = parsed.path or ""
     qs = parse_qs(parsed.query or "")
@@ -54,9 +52,7 @@ def _parse(
         return None
 
     kind = MediaKind.TRACK if video_id else MediaKind.PLAYLIST
-    canonical_url = _canonicalize(
-        platform=platform, video_id=video_id, playlist_id=playlist_id
-    )
+    canonical_url = _canonicalize(platform=platform, video_id=video_id, playlist_id=playlist_id)
 
     return ParsedLink(
         platform=platform,
@@ -68,9 +64,7 @@ def _parse(
     )
 
 
-def _canonicalize(
-    platform: Platform, video_id: str | None, playlist_id: str | None
-) -> str:
+def _canonicalize(platform: Platform, video_id: str | None, playlist_id: str | None) -> str:
     base = (
         "https://music.youtube.com"
         if platform is Platform.YOUTUBE_MUSIC

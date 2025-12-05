@@ -1,5 +1,18 @@
 # YAML settings for YOTG Media Bot
-# Copy to config/settings.yaml and fill in the values.
+# Copy to config/settings.yaml and customize values.
+
+# Required: Telegram Bot API token
 bot_token: "YOUR_TELEGRAM_BOT_TOKEN"
+
+# Optional: default locale for new users
 locale_default: "ru"
+
+# Optional: temp working dir for downloads/transcoding (must exist)
 tmp_dir: "/dev/shm/yotg-media-bot"
+# Optional: persistent data dir (user preferences, quotas, roles, etc.)
+# Override this if you need a different path (e.g., on Windows).
+# data_dir: "C:/yotg/data"
+
+# Required for access control: Telegram user ID of the root admin
+# Root admin automatically has access and can manage other admins.
+root_admin_id: 123456789

@@ -107,3 +107,46 @@ async def _write_id3(audio_path: Path, metadata: dict[str, Any], thumb_path: Pat
             )
         )
     audio.save(v2_version=3)
+
+
+async def shrink_video(source: Path, work_dir: Path, size_limit: int) -> Path:
+    """Transcode video to fit Telegram limits if necessary."""
+    if source.stat().st_size <= size_limit:
+        return source
+
+    target = work_dir / f"{source.stem}_tg.mp4"
+    cmd = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        str(source),
+        "-vf",
+        "scale='min(1280,iw)':-2",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "veryfast",
+        "-crf",
+        "28",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "128k",
+        "-movflags",
+        "+faststart",
+        str(target),
+    ]
+    _log.info("Transcoding video to fit size limit: %s -> %s", source.name, target.name)
+    proc = await asyncio.create_subprocess_exec(
+        *cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    _, stderr = await proc.communicate()
+    if proc.returncode != 0:
+        _log.error("ffmpeg shrink failed: %s", stderr.decode(errors="ignore"))
+        return source
+    if target.stat().st_size > size_limit:
+        _log.warning("Shrinked video still above limit (%s bytes)", target.stat().st_size)
+        return source
+    return target

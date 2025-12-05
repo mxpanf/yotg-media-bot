@@ -1,6 +1,4 @@
-"""
-Utility for maintaining status message updates with persistent chat actions.
-"""
+"""Utility for sending periodic chat actions instead of manual status messages."""
 
 from __future__ import annotations
 
@@ -10,47 +8,26 @@ from aiogram.enums import ChatAction
 from aiogram.exceptions import TelegramAPIError
 from aiogram.types import Message
 
-from app.i18n import I18n
-
 
 class StatusNotifier:
-    """
-    Keeps a single status message updated while continuously sending chat actions
-    (typing/uploading) until the next status or completion.
-    """
+    """Continuously emits chat actions (typing/uploading) until completion."""
 
-    def __init__(self, origin: Message, i18n: I18n, locale: str):
+    def __init__(self, origin: Message):
         self._origin = origin
-        self._i18n = i18n
-        self._locale = locale
-        self._message: Message | None = None
-        self._current_text: str = ""
         self._action_task: asyncio.Task[None] | None = None
         self._current_action: ChatAction = ChatAction.TYPING
 
     async def push(
         self,
-        key: str,
+        key: str | None = None,
         *,
         action: ChatAction = ChatAction.TYPING,
         **kwargs: object,
     ) -> None:
         await self._ensure_action(action)
-        text = self._i18n.gettext(key, locale=self._locale, **kwargs)
-        self._current_text = text
-        if self._message is None:
-            self._message = await self._origin.answer(text)
-        else:
-            await self._safe_edit(text)
 
     async def delete(self) -> None:
         await self._stop_action()
-        if self._message:
-            try:
-                await self._message.delete()
-            except TelegramAPIError:
-                pass
-            self._message = None
 
     async def _ensure_action(self, action: ChatAction) -> None:
         if self._action_task and action == self._current_action:
@@ -85,14 +62,5 @@ class StatusNotifier:
                 chat_id=self._origin.chat.id,
                 action=action,
             )
-        except TelegramAPIError:
-            pass
-
-    async def _safe_edit(self, text: str) -> None:
-        if not self._message:
-            return
-        try:
-            if self._message.text != text:
-                await self._message.edit_text(text)
         except TelegramAPIError:
             pass
