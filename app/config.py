@@ -27,6 +27,8 @@ class AppConfig(BaseSettings):
     bot_token: str = Field(..., alias="bot_token")
     locale_default: str = Field("ru", alias="locale_default")
     tmp_dir: Path = Field(Path("/dev/shm/yotg-media-bot"), alias="tmp_dir")
+    data_dir: Path = Field(Path.home() / ".local/share/yotg-media-bot", alias="data_dir")
+    root_admin_id: int = Field(0, alias="root_admin_id")
 
     @classmethod
     @classmethod
