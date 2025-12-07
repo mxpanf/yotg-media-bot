@@ -2,11 +2,9 @@ import asyncio
 from pathlib import Path
 from typing import Any
 
-import pytest
 from aiogram.exceptions import TelegramAPIError
 
 from app.handlers.private import (
-    handle_add,
     handle_deop,
     handle_forward_access,
     handle_link,
@@ -219,3 +217,51 @@ def test_handle_link_too_large_video_reports_error(tmp_path: Path) -> None:
     )
 
     assert any("too large" in resp.get("text", "").lower() for resp in message.responses)
+
+
+def test_handle_link_unsupported_platform(tmp_path: Path) -> None:
+    ctx = build_context(tmp_path)
+    ctx["access"].add_user(5)
+    bot = FakeBot()
+    user = FakeUser(5, "en")
+    message = FakeMessage(text="https://example.com/foo", from_user=user, bot=bot)
+
+    run(
+        handle_link(
+            message=message,
+            i18n=ctx["i18n"],
+            storage=DummyStorage(tmp_path),
+            plugins={},
+            preferences=ctx["preferences"],
+            access_control=ctx["access"],
+        )
+    )
+
+    assert any(
+        "Link is not supported".lower() in resp.get("text", "").lower()
+        for resp in message.responses
+    )
+
+
+def test_handle_link_missing_plugin(tmp_path: Path) -> None:
+    ctx = build_context(tmp_path)
+    ctx["access"].add_user(5)
+    bot = FakeBot()
+    user = FakeUser(5, "en")
+    message = FakeMessage(text="https://www.youtube.com/watch?v=vid", from_user=user, bot=bot)
+
+    run(
+        handle_link(
+            message=message,
+            i18n=ctx["i18n"],
+            storage=DummyStorage(tmp_path),
+            plugins={},  # no plugin for YOUTUBE
+            preferences=ctx["preferences"],
+            access_control=ctx["access"],
+        )
+    )
+
+    assert any(
+        "Link is not supported".lower() in resp.get("text", "").lower()
+        for resp in message.responses
+    )

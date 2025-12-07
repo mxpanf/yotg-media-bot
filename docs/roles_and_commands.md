@@ -19,4 +19,5 @@
 
 ## Notes
 - Access data is stored in `data_dir/access.json` (configurable via `data_dir` in settings).
-- Promotion/demotion and removal do not affect the root admin.***
+- Promotion/demotion and removal do not affect the root admin.
+- Telegram upload limit for bots is ~50 MB; the bot keeps a 48 MB safety cap and auto-transcodes videos down (up to 1080p) to fit. If Telegram still rejects a file as too large, the user gets a warning.
